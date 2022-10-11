@@ -6,8 +6,22 @@
     <title>Bootstrap w/ Webpack</title>
   </head>
     <body>
-      <h1>Hello world!</h1>
-      <h2>Tip: Check your console</h2>
+      <div class="container">
+        <!-- <h1>RSS агрегатор</h1>
+        <p>Начните читать RSS сегодня! Это легко, это красиво.</p> -->
+        <form action="#" method="post" enctype="multipart/form-data">
+          <div class = "mb-3">
+            <label for="inputLink" class="form-label">RSS агрегатор</label>
+            <input type="text" class="form-contrtol" id="inputLink" name="link" placeholder="Ссылка RSS">
+            <button type="submit">Добавить</button>
+            <div id="linkHelpBlock" class="form-text">
+              Пример: https://ru.hexlet.io/lessons.rss
+            </div>
+          </div>
+        </form>
+      </div>
+      <div></div>
+
       <script src="main.js"></script>
     </body>
 </html>
