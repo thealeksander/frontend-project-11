@@ -4,20 +4,20 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Bootstrap w/ Webpack</title>
+    <link rel="stylesheet" href="./src/styles.scss">
   </head>
   <body>
-  <div class="container">
+  <section class="container-fluid bg-dark">
     <form action="#" method="post" enctype="multipart/form-data">
-      <div class="mb-3">
+      <div class="mb-3 text-light">
         <h1>RSS агрегатор</h1>
         <p>Начните читать RSS сегодня! Это легко, это красиво.</p> 
         <input class="form-contrtol" id="inputLink" name="link" placeholder="Ссылка RSS"> 
-        <button type="submit">Добавить</button>
+        <button type="submit" class="btn btn-primary">Добавить</button>
         <div id="linkHelpBlock" class="form-text">Пример: https://ru.hexlet.io/lessons.rss</div>
       </div>
     </form>
-  </div>
-  <div></div>
-    <script src="main.js"></script>
+  </section>
+  <section></section>
   </body>
 </html>
