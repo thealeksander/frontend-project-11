@@ -1,16 +1,16 @@
 import _ from 'lodash';
 import * as yup from 'yup';
 import onChange from 'on-change';
-import getLinks from './server';
+import { getLinks, saveLink } from './server';
 import { renderErrors, handleProcessState } from './render';
 
-const schema = yup.object.shape({
+const schema = yup.object().shape({
   rss: yup.string().trim().required().url().oneOf(getLinks(), 'RSS уже существует'),
 });
 
-const validate = (filds) => {
+const validate = (fields) => {
 	try {
-		schema.validateSync(filds, { abortEarly: false });
+		schema.validateSync(fields, { abortEarly: false });
 		return {};
 	} catch (e) {
 		return _.keyBy(e.inner, 'path');
@@ -20,7 +20,7 @@ const validate = (filds) => {
 export default () => {
 	const elements = {
 		form: document.querySelector('.rss-form'),
-		filds: {
+		fields: {
 			rss: document.querySelector('#url-input'),
 		},
 		submitButton: document.querySelector('#submit'),
@@ -34,11 +34,12 @@ export default () => {
 			errors: {},
 		},
 	}, (path, value, prevValue) => {
+		// console.log(path);
 		switch (path) {
-			case 'searсh.valid':
-				elements.submitButton.disabled = !value;
-				break;
-			case 'search.errors':
+			// case 'searсh.valid':
+			// 	elements.submitButton.disabled = !value;
+			// 	break;
+			case 'searсh.errors':
 				renderErrors(elements, value, prevValue);
 				break;
 			case 'search.mode':
@@ -49,14 +50,25 @@ export default () => {
 		}
 	});
 
-	Object.entries(elements.filds).forEach(([fieldName, fieldElement]) => {
+	Object.entries(elements.fields).forEach(([fieldName, fieldElement]) => {
 		fieldElement.addEventListener('input', (event) => {
 			const { value } = event.target;
 			state.searсh.data[fieldName] = value;
-
-			const errors = validate(state.searсh.data);
-			state.searсh.errors = errors;
-			state.form.valid = _.isEmpty(errors);
 		});
+	});
+
+	elements.form.addEventListener('submit', (event) => {
+		event.preventDefault();
+
+		const error = validate(state.searсh.data);
+		state.searсh.errors = error;
+		state.searсh.valid = _.isEmpty(error);
+		if (!state.searсh.valid) {
+			return false;
+		}
+
+		state.searсh.mode = 'sending';
+		saveLink(state.searсh.data.rss);
+		state.searсh.mode = 'sent';
 	});
 };
