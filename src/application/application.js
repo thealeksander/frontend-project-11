@@ -1,21 +1,9 @@
 import _ from 'lodash';
 import * as yup from 'yup';
 import onChange from 'on-change';
-import { getLinks, saveLink } from './server';
 import { renderErrors, handleProcessState } from './render';
 
-const schema = yup.object().shape({
-  rss: yup.string().trim().required().url().oneOf(getLinks(), 'RSS уже существует'),
-});
-
-const validate = (fields) => {
-	try {
-		schema.validateSync(fields, { abortEarly: false });
-		return {};
-	} catch (e) {
-		return _.keyBy(e.inner, 'path');
-	}
-};
+const schema = (watchedLinks) => yup.string().trim().url().notOneOf(watchedLinks, 'RSS уже существует');
 
 export default () => {
 	const elements = {
@@ -23,26 +11,24 @@ export default () => {
 		fields: {
 			rss: document.querySelector('#url-input'),
 		},
+    feedbackEl: document.querySelector('.feedback'),
 		submitButton: document.querySelector('#submit'),
 	};
 
 	const state = onChange({
 		searсh: {
-			mode: 'filling',
-			valid: true,
+			state: 'filling',
 			data: {},
-			errors: {},
+      watchedLinks: [],
+			error: null,
 		},
 	}, (path, value, prevValue) => {
-		// console.log(path);
+    // console.log(path);
 		switch (path) {
-			// case 'searсh.valid':
-			// 	elements.submitButton.disabled = !value;
-			// 	break;
-			case 'searсh.errors':
+			case 'searсh.error':
 				renderErrors(elements, value, prevValue);
 				break;
-			case 'search.mode':
+			case 'search.state':
 				handleProcessState(elements, value);
 				break;
 			default:
@@ -50,25 +36,23 @@ export default () => {
 		}
 	});
 
-	Object.entries(elements.fields).forEach(([fieldName, fieldElement]) => {
-		fieldElement.addEventListener('input', (event) => {
-			const { value } = event.target;
-			state.searсh.data[fieldName] = value;
-		});
-	});
-
 	elements.form.addEventListener('submit', (event) => {
 		event.preventDefault();
 
-		const error = validate(state.searсh.data);
-		state.searсh.errors = error;
-		state.searсh.valid = _.isEmpty(error);
-		if (!state.searсh.valid) {
-			return false;
-		}
+    state.searсh.state = 'sending';
+    const formData = new FormData(event.target);
+    const url = formData.get('url');
 
-		state.searсh.mode = 'sending';
-		saveLink(state.searсh.data.rss);
-		state.searсh.mode = 'sent';
+    schema(state.searсh.watchedLinks)
+      .validate(url, { abortEarly: false })
+      .then((urlLink) => {
+        state.searсh.error = null;
+        state.searсh.watchedLinks.push(urlLink);
+        return;
+      })
+      .catch((err) => {
+        state.searсh.error = err.message;
+        return;
+      });
 	});
 };

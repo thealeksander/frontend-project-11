@@ -1,26 +1,36 @@
-export const renderErrors = (elements, errors, prevErrors) => {
-  Object.entries(elements.fields).forEach(([fieldName, fieldElement]) => {
-    const error = errors[fieldName];
-    const feedbackEl = elements.form.nextElementSibling.nextElementSibling;
+export const renderErrors = (elements, error, prevError) => {
+  const rssElement = elements.fields.rss;
+  const feedbackEl = elements.feedbackEl;
 
-    const fieldHadError = _.has(prevErrors, fieldName);
-    const fieldHasError = _.has(errors, fieldName);
-    if (!fieldHadError && !fieldHasError) {
-      return;
-    }
-    if (fieldHadError && !fieldHasError) {
-      fieldElement.classList.remove('is-invalid');
-      feedbackEl.textContent = '';
-      return;
-    }
-    if (fieldHadError && fieldHasError) {
-      feedbackEl.textContent = error.message;
-      return;
-    }
+  const isError = (error !== null) ? true : false;
+  const wasError = (prevError !== null) ? true : false;
 
-    fieldElement.classList.add('is-invalid');
-    feedbackEl.textContent = error.message;
-  });
+  if (!wasError && !isError) {
+    return;
+  }
+  if (wasError && !isError) {
+    rssElement.classList.remove('is-invalid');
+    feedbackEl.textContent = '';
+    return;
+  }
+  if (wasError && isError) {
+    feedbackEl.textContent = error;
+    return;
+  }
+
+  rssElement.classList.add('is-invalid');
+  feedbackEl.textContent = error;
 };
 
-export const handleProcessState = (elements, value) => {};
+export const handleProcessState = (elements, value) => {
+  switch (value) {
+    case 'sending':
+      elements.submitButton.disabled = true;
+      break;
+    case 'sent':
+      elements.submitButton.disabled = false;
+      break;
+    default:
+      break;
+  }
+};
