@@ -6,22 +6,9 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  entry: {
-    index: {
-      import: './src/index.js',
-      dependOn: 'shared',
-    },
-    another: {
-      import: './src/another-module.js',
-      dependOn: 'shared',
-    },
-    shared: 'lodash',
-  },
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-  },
-  optimization: {
-    runtimeChunk: 'single',
   },
   devServer: {
     open: true,
