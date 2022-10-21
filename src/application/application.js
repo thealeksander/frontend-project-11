@@ -5,10 +5,17 @@ import resources from '../locales/index';
 import onChange from 'on-change';
 import { renderErrors, handleProcessState } from './render';
 
-const schema = (watchedLinks) => yup.string().trim().url().notOneOf(watchedLinks, 'RSS уже существует');
+yup.setLocale({
+  mixed: {
+    default: 'valid',
+  },  
+  // notOneOf: i18next.t('errorsMessage.similarUrl'),
+});
+
+const schema = (watchedLinks) => yup.string().trim().url().notOneOf(watchedLinks, 'RSS уже существует!');
 
 export default () => {
-  const defaultLg = 'en';
+  const defaultLg = 'ru';
   const i18nextInstance = i18next.createInstance();
   i18nextInstance.init({
     lng: defaultLg,
@@ -61,6 +68,7 @@ export default () => {
             return;
           })
           .catch((err) => {
+            console.log(err.errors);
             state.searсh.error = err.message;
             return;
           });
