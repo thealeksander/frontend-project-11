@@ -44,7 +44,6 @@ export const handleProcessState = (elements, value, i18n) => {
         feedbackEl.classList.remove('text-danger');
       }
       feedbackEl.classList.add('text-success');
-
       feedbackEl.textContent = i18n.t(`feedbackText.${value}`);
       break;
     default:
