@@ -1,8 +1,9 @@
 export default {
   translation: {
-    errorsMessage: {
-      valid: 'Ссылка должна быть валидным URL',
+    feedbackText: {
+      inValid: 'Ссылка должна быть валидным URL',
       similarUrl: 'RSS уже существует',
+      successfully: 'RSS успешно загружен',
     },
   },
 };

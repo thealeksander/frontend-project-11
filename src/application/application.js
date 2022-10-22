@@ -5,24 +5,26 @@ import resources from '../locales/index';
 import onChange from 'on-change';
 import { renderErrors, handleProcessState } from './render';
 
-yup.setLocale({
-  mixed: {
-    default: 'valid',
-  },  
-  // notOneOf: i18next.t('errorsMessage.similarUrl'),
-});
-
-const schema = (watchedLinks) => yup.string().trim().url().notOneOf(watchedLinks, 'RSS уже существует!');
-
 export default () => {
   const defaultLg = 'ru';
-  const i18nextInstance = i18next.createInstance();
-  i18nextInstance.init({
+  const i18n = i18next.createInstance();
+  i18n.init({
     lng: defaultLg,
     debug: true,
     resources,
   })
     .then(() => {
+      yup.setLocale({
+        string: {
+          url: 'inValid',
+        },
+        mixed: {
+          notOneOf: 'similarUrl',
+        },  
+      });
+
+      const schema = (watchedLinks) => yup.string().trim().url().notOneOf(watchedLinks);
+
       const elements = {
         form: document.querySelector('.rss-form'),
         fields: {
@@ -34,19 +36,19 @@ export default () => {
     
       const state = onChange({
         searсh: {
-          state: 'filling',
+          mode: 'filling',
           data: {},
           watchedLinks: [],
           error: null,
         },
       }, (path, value, prevValue) => {
-        // console.log(path);
+        console.log(path);
         switch (path) {
           case 'searсh.error':
-            renderErrors(elements, value, prevValue);
+            renderErrors(elements, value, prevValue, i18n);
             break;
-          case 'search.state':
-            handleProcessState(elements, value);
+          case 'searсh.mode':
+            handleProcessState(elements, value, i18n);
             break;
           default:
             break;
@@ -56,7 +58,7 @@ export default () => {
       elements.form.addEventListener('submit', (event) => {
         event.preventDefault();
     
-        state.searсh.state = 'sending';
+        state.searсh.mode = 'sending';
         const formData = new FormData(event.target);
         const url = formData.get('url');
     
@@ -65,11 +67,13 @@ export default () => {
           .then((urlLink) => {
             state.searсh.error = null;
             state.searсh.watchedLinks.push(urlLink);
+            state.searсh.mode = 'successfully';
             return;
           })
           .catch((err) => {
             console.log(err.errors);
             state.searсh.error = err.message;
+            state.searсh.mode = 'error';
             return;
           });
       });
