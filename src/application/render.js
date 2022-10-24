@@ -45,8 +45,27 @@ export const handleProcessState = (elements, value, i18n) => {
       }
       feedbackEl.classList.add('text-success');
       feedbackEl.textContent = i18n.t(`feedbackText.${value}`);
+      elements.fields.rss.value = '';
+      elements.fields.rss.focus();
       break;
     default:
       break;
   }
+};
+
+export const renderFeed = (elements, feeds, i18n) => {
+  console.log(feeds);
+  const { title, description } = feeds;
+  const feedsIneer = `
+    <h1 class="fs-4 fw-semibold mb-4">${i18n.t('feeds')}</h1>
+    <div class="text-md-start m-0">
+      <div class="fw-semibold m-0">${title}</div>
+      <div class="small text-black-50 m-0">${description}</div>
+    </div>
+  `;
+  elements.feeds.innerHTML = feedsIneer;
+};
+
+export const renderPosts = (elements, posts) => {
+
 };

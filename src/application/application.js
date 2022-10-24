@@ -3,7 +3,15 @@ import * as yup from 'yup';
 import i18next from 'i18next';
 import resources from '../locales/index';
 import onChange from 'on-change';
-import { renderErrors, handleProcessState } from './render';
+import axios from 'axios';
+import buildPath from './path';
+import parser from './parser';
+import { 
+  renderErrors, 
+  handleProcessState,
+  renderFeed,
+  renderPosts,
+} from './render';
 
 export default () => {
   const defaultLg = 'ru';
@@ -32,6 +40,8 @@ export default () => {
         },
         feedbackEl: document.querySelector('.feedback'),
         submitButton: document.querySelector('#submit'),
+        feeds: document.querySelector('.feeds'),
+        posts: document.querySelector('.posts'),
       };
     
       const state = onChange({
@@ -39,7 +49,12 @@ export default () => {
           mode: 'filling',
           data: {},
           watchedLinks: [],
+          feeds: {},
+          posts: [], 
           error: null,
+          network: {
+            error: 'Network Problems. Try again.',
+          },
         },
       }, (path, value, prevValue) => {
         console.log(path);
@@ -49,6 +64,12 @@ export default () => {
             break;
           case 'searсh.mode':
             handleProcessState(elements, value, i18n);
+            break;
+          case 'searсh.feeds':
+            renderFeed(elements, value, i18n);
+            break;
+          case 'search.posts':
+            renderPosts(elements, value);
             break;
           default:
             break;
@@ -67,6 +88,15 @@ export default () => {
           .then((urlLink) => {
             state.searсh.error = null;
             state.searсh.watchedLinks.push(urlLink);
+            axios.get(buildPath(urlLink))
+              .then((response) => {
+                const { title, description, posts }  = parser(response.data.contents);
+                state.searсh.feeds = { title, description };
+                state.searсh.posts = [ ...posts ];
+                console.log(state.searсh.feeds);
+                console.log(state.searсh.posts);
+              })
+              .catch((err) => console.log(`${err}\n${state.searсh.network.error}`));
             state.searсh.mode = 'successfully';
             return;
           })

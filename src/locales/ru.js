@@ -5,5 +5,6 @@ export default {
       similarUrl: 'RSS уже существует',
       successfully: 'RSS успешно загружен',
     },
+    feeds: 'Фиды',
   },
 };
