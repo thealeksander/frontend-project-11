@@ -52,9 +52,6 @@ export default () => {
           feeds: {},
           posts: [], 
           error: null,
-          network: {
-            error: 'Network Problems. Try again.',
-          },
         },
       }, (path, value, prevValue) => {
         console.log(path);
@@ -68,8 +65,8 @@ export default () => {
           case 'searсh.feeds':
             renderFeed(elements, value, i18n);
             break;
-          case 'search.posts':
-            renderPosts(elements, value);
+          case 'searсh.posts':
+            renderPosts(elements, value, i18n);
             break;
           default:
             break;
@@ -89,22 +86,24 @@ export default () => {
             state.searсh.error = null;
             state.searсh.watchedLinks.push(urlLink);
             axios.get(buildPath(urlLink))
-              .then((response) => {
-                const { title, description, posts }  = parser(response.data.contents);
-                state.searсh.feeds = { title, description };
-                state.searсh.posts = [ ...posts ];
-                console.log(state.searсh.feeds);
-                console.log(state.searсh.posts);
-              })
-              .catch((err) => console.log(`${err}\n${state.searсh.network.error}`));
+          })
+          .then((response) => {
+            const { title, description, posts }  = parser(response.data.contents);
+            state.searсh.feeds = { title, description };
+            state.searсh.posts = [ ...posts ];
+            console.log(state.searсh.feeds);
+            console.log(state.searсh.posts);
             state.searсh.mode = 'successfully';
-            return;
           })
           .catch((err) => {
-            console.log(err.errors);
-            state.searсh.error = err.message;
+            console.log(err.name);
+            if (err.name === 'AxiosError') {
+              state.searсh.error = 'network';
+            } else if (err.name === 'ValidationError') {
+              console.log(err.message);
+              state.searсh.error = err.message;
+            }
             state.searсh.mode = 'error';
-            return;
           });
       });
     });

@@ -16,7 +16,6 @@ export default (htmlContent) => {
     return { titlePost, linkPost, idPost };
   });
 
-  // console.log({ title, description, posts });
   return { title, description, posts };
 };
 
