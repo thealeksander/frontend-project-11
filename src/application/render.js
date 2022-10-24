@@ -57,11 +57,14 @@ export const renderFeed = (elements, feeds, i18n) => {
   console.log(feeds);
   const { title, description } = feeds;
   const feedsIneer = `
-    <h1 class="fs-4 fw-semibold mb-4">${i18n.t('feeds')}</h1>
-    <div class="text-md-start m-0">
-      <div class="fw-semibold m-0">${title}</div>
-      <div class="small text-black-50 m-0">${description}</div>
+    <div class="card border-0">
+      <div class="card-body">
+        <h1 class="card-title fs-4 fw-semibold mb-4">${i18n.t('feeds')}</h1>
+        <h3 class="fw-semibold fs-6 m-0">${title}</h3>
+        <p class="small text-black-50 m-0">${description}</p>
+      </div>
     </div>
+
   `;
   elements.feeds.innerHTML = feedsIneer;
 };
