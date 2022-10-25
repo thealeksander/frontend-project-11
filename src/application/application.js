@@ -85,9 +85,10 @@ export default () => {
           .then((urlLink) => {
             state.searсh.error = null;
             state.searсh.watchedLinks.push(urlLink);
-            axios.get(buildPath(urlLink))
+            return axios.get(buildPath(urlLink));
           })
           .then((response) => {
+            // console.log(response);
             const { title, description, posts }  = parser(response.data.contents);
             state.searсh.feeds = { title, description };
             state.searсh.posts = [ ...posts ];
@@ -99,7 +100,7 @@ export default () => {
             console.log(err.name);
             if (err.name === 'AxiosError') {
               state.searсh.error = 'network';
-            } else if (err.name === 'ValidationError') {
+            } else {
               console.log(err.message);
               state.searсh.error = err.message;
             }
