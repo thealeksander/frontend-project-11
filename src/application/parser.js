@@ -18,6 +18,5 @@ export default (htmlContent) => {
   } catch (e) {
     throw new Error('inValidRss');
   }
-
 };
 

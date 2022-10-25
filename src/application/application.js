@@ -107,5 +107,7 @@ export default () => {
             state.searсh.mode = 'error';
           });
       });
+
+
     });
 };

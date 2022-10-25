@@ -1,3 +1,5 @@
+import onChange from "on-change";
+
 export const renderErrors = (elements, error, prevError, i18n) => {
   const rssElement = elements.fields.rss;
   const feedbackEl = elements.feedbackEl;
@@ -51,6 +53,27 @@ export const handleProcessState = (elements, value, i18n) => {
   }
 };
 
+const viewedPosts = (viewedIds) => {
+  viewedIds.forEach((id) => {
+    const viewedPost = document.querySelector(`a[data-id="${id}"]`)
+    viewedPost.classList.add('link-secondary');
+    viewedPost.classList.remove('fw-bolder');
+  });
+};
+
+const state = onChange({
+  viewedIds: [],
+}, (path, value, prevValue) => {
+  // console.log(path);
+  switch (path) {
+    case 'viewedIds':
+      viewedPosts(value);
+      break;
+    default:
+      break;
+  }
+});
+
 export const renderFeed = (elements, feeds, i18n) => {
   const { title, description } = feeds;
   const feedsIneer =
@@ -73,12 +96,20 @@ export const renderPosts = (elements, posts, i18n) => {
       <ul class="list-group list-group-flush">
         ${posts.map(({ titlePost, linkPost, idPost }) => {
           return `<li class="list-group-item d-flex justify-content-between border-bottom-0">
-            <a href="${linkPost}" class="card-link fw-bolder" data-id="${idPost}" target="_blank">${titlePost}</a>
+            <a href="${linkPost}" class="card-link fw-bolder" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
             <button type="button" class="btn btn-outline-primary btn-sm" data-id="${idPost}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
           </li>`
         }).join('')}
       </ul>  
     </div>`;
-  console.log(elements.posts);
+  // console.log(elements.posts);
   elements.posts.innerHTML = postsInner;
+
+  const links = elements.posts.querySelectorAll('a.card-link');
+  links.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const linkId = event.target.dataset.id;
+      state.viewedIds.push(linkId);
+    });
+  });
 };
