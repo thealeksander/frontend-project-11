@@ -13,6 +13,30 @@ import {
   renderPosts,
 } from './render';
 
+const updateData = (watchedState) => {
+  const cb = () => {
+    Promise.all(watchedState.searсh.watchedLinks.map((link) => axios.get(buildPath(link))))
+      .then((responseArr) => {
+        const postAll =  responseArr.reduce((acc, response) => {
+          const { posts } = parser(response.data.contents);
+          return [...acc, ...posts];
+        }, []);
+        // console.log(postAll);
+        const newPosts = _.differenceBy(postAll, Array.from(watchedState.searсh.posts), 'titlePost');
+        console.log(newPosts);
+        if (newPosts.length !== 0) {
+          watchedState.searсh.posts = [...newPosts, ...watchedState.searсh.posts];
+        }
+      })
+      .catch((e) => {
+        watchedState.searсh.error = 'network';
+        watchedState.searсh.mode = 'error';
+      })
+      .finally(() => setTimeout(cb, 5000));
+  };
+  setTimeout(cb, 5000);
+};
+
 const openHolder = (activeId, state, elements) => {
   if (!state.searсh.viewedIds.includes(activeId)) {
     state.searсh.viewedIds.push(activeId);
@@ -103,7 +127,9 @@ export default () => {
             break;
         }
       });
-    
+
+      updateData(watchedState);
+
       elements.form.addEventListener('submit', (event) => {
         event.preventDefault();
     
