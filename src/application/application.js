@@ -14,8 +14,8 @@ import {
 } from './render';
 
 const updateData = (watchedState) => {
-  console.log('Ok!');
   const cb = () => {
+    console.log('Ok!');
     Promise.all(watchedState.searсh.watchedLinks.map((link) => axios.get(buildPath(link))))
       .then((responseArr) => {
         const postAll =  responseArr.reduce((acc, response) => {
@@ -28,8 +28,7 @@ const updateData = (watchedState) => {
         }
       })
       .catch((e) => {
-        watchedState.searсh.error = 'network';
-        watchedState.searсh.mode = 'error';
+        console.log(e);
       })
       .finally(() => setTimeout(cb, 5000));
   };
@@ -42,7 +41,7 @@ const openHolder = (activeId, state, elements) => {
 
     const viewedPost = document.querySelector(`a[data-id="${activeId}"]`)
     viewedPost.classList.add('link-secondary', 'fw-normal');
-    viewedPost.classList.remove('fw-bolder');
+    viewedPost.classList.remove('fw-bold');
   }
   const activePost = state.searсh.posts.find(({ idPost }) => idPost === activeId);
   const { titlePost, descriptionPost, linkPost } = activePost;
@@ -65,7 +64,7 @@ export default () => {
       feeds: {},
       posts: [],
       activePost: null,
-      viewedIds: [],
+      viewedIds: [], //новый rss не видит
       error: null,
     },
   };
@@ -117,7 +116,7 @@ export default () => {
             renderFeed(elements, value, i18n);
             break;
           case 'searсh.posts':
-            renderPosts(elements, value, i18n);
+            renderPosts(elements, value, i18n, state);
             break;
           case 'searсh.activePost':
             openHolder(value, state, elements);
@@ -139,8 +138,10 @@ export default () => {
         schema(watchedState.searсh.watchedLinks)
           .validate(url, { abortEarly: false })
           .then((urlLink) => {
+            console.log('what?!');
             watchedState.searсh.error = null;
             watchedState.searсh.watchedLinks.push(urlLink);
+            // console.log(watchedState.searсh.watchedLinks);
             return axios.get(buildPath(urlLink));
           })
           .then((response) => {
@@ -175,6 +176,7 @@ export default () => {
               watchedState.searсh.error = err.message;
             }
             watchedState.searсh.mode = 'error';
+            console.log(watchedState.searсh.watchedLinks);
           });
       });
     });
