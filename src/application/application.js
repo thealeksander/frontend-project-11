@@ -13,11 +13,36 @@ import {
   renderPosts,
 } from './render';
 
+const viewedPosts = (newId, state) => {
+  if (!state.searсh.viewedIds.includes(newId)) {
+    state.searсh.viewedIds.push(newId);
+
+    const viewedPost = document.querySelector(`a[data-id="${newId}"]`)
+    viewedPost.classList.add('link-secondary');
+    viewedPost.classList.remove('fw-bolder');
+  }
+  return;
+};
+
 export default () => {
   const defaultLg = 'ru';
+  const state = {
+    lng: defaultLg,
+    searсh: {
+      mode: 'filling',
+      data: {},
+      watchedLinks: [],
+      feeds: {},
+      posts: [],
+      activePost: null,
+      viewedIds: [],
+      error: null,
+    },
+  };
+
   const i18n = i18next.createInstance();
   i18n.init({
-    lng: defaultLg,
+    lng: state.lng,
     debug: true,
     resources,
   })
@@ -43,17 +68,8 @@ export default () => {
         feeds: document.querySelector('.feeds'),
         posts: document.querySelector('.posts'),
       };
-    
-      const state = onChange({
-        searсh: {
-          mode: 'filling',
-          data: {},
-          watchedLinks: [],
-          feeds: {},
-          posts: [], 
-          error: null,
-        },
-      }, (path, value, prevValue) => {
+
+      const watchedState = onChange(state, (path, value, prevValue) => {
         console.log(path);
         switch (path) {
           case 'searсh.error':
@@ -68,6 +84,9 @@ export default () => {
           case 'searсh.posts':
             renderPosts(elements, value, i18n);
             break;
+          case 'searсh.activePost':
+            viewedPosts(value, state);
+            break;
           default:
             break;
         }
@@ -76,38 +95,52 @@ export default () => {
       elements.form.addEventListener('submit', (event) => {
         event.preventDefault();
     
-        state.searсh.mode = 'sending';
+        watchedState.searсh.mode = 'sending';
         const formData = new FormData(event.target);
         const url = formData.get('url');
     
-        schema(state.searсh.watchedLinks)
+        schema(watchedState.searсh.watchedLinks)
           .validate(url, { abortEarly: false })
           .then((urlLink) => {
-            state.searсh.error = null;
-            state.searсh.watchedLinks.push(urlLink);
+            watchedState.searсh.error = null;
+            watchedState.searсh.watchedLinks.push(urlLink);
             return axios.get(buildPath(urlLink));
           })
           .then((response) => {
             // console.log(response);
             const { title, description, posts }  = parser(response.data.contents);
-            state.searсh.feeds = { title, description };
-            state.searсh.posts = [ ...posts ];
-            console.log(state.searсh.feeds);
-            console.log(state.searсh.posts);
-            state.searсh.mode = 'successfully';
+            watchedState.searсh.feeds = { title, description };
+            watchedState.searсh.posts = [ ...posts ];
+            // console.log(watchedState.searсh.feeds);
+            // console.log(watchedState.searсh.posts);
+            watchedState.searсh.mode = 'successfully';
+
+            const links = elements.posts.querySelectorAll('a.card-link');
+            links.forEach((link) => {
+              link.addEventListener('click', (event) => {
+                const linkId = event.target.dataset.id;
+                watchedState.searсh.activePost = linkId;
+              });
+            });
+
+            const btnsLink = elements.posts.querySelectorAll('.btn');
+            btnsLink.forEach((btn) => {
+              btn.addEventListener('click', (event) => {
+                const id = event.target.dataset.id;
+                watchedState.searсh.activePost = id;
+              });
+            });
           })
           .catch((err) => {
             console.log(err.name);
             if (err.name === 'AxiosError') {
-              state.searсh.error = 'network';
+              watchedState.searсh.error = 'network';
             } else {
               console.log(err.message);
-              state.searсh.error = err.message;
+              watchedState.searсh.error = err.message;
             }
-            state.searсh.mode = 'error';
+            watchedState.searсh.mode = 'error';
           });
       });
-
-
     });
 };

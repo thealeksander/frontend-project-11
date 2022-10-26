@@ -53,27 +53,6 @@ export const handleProcessState = (elements, value, i18n) => {
   }
 };
 
-const viewedPosts = (viewedIds) => {
-  viewedIds.forEach((id) => {
-    const viewedPost = document.querySelector(`a[data-id="${id}"]`)
-    viewedPost.classList.add('link-secondary');
-    viewedPost.classList.remove('fw-bolder');
-  });
-};
-
-const state = onChange({
-  viewedIds: [],
-}, (path, value, prevValue) => {
-  // console.log(path);
-  switch (path) {
-    case 'viewedIds':
-      viewedPosts(value);
-      break;
-    default:
-      break;
-  }
-});
-
 export const renderFeed = (elements, feeds, i18n) => {
   const { title, description } = feeds;
   const feedsIneer =
@@ -102,14 +81,6 @@ export const renderPosts = (elements, posts, i18n) => {
         }).join('')}
       </ul>  
     </div>`;
-  // console.log(elements.posts);
-  elements.posts.innerHTML = postsInner;
 
-  const links = elements.posts.querySelectorAll('a.card-link');
-  links.forEach((link) => {
-    link.addEventListener('click', (event) => {
-      const linkId = event.target.dataset.id;
-      state.viewedIds.push(linkId);
-    });
-  });
+  elements.posts.innerHTML = postsInner;
 };
