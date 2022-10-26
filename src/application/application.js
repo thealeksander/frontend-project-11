@@ -14,6 +14,7 @@ import {
 } from './render';
 
 const updateData = (watchedState) => {
+  console.log('Ok!');
   const cb = () => {
     Promise.all(watchedState.searсh.watchedLinks.map((link) => axios.get(buildPath(link))))
       .then((responseArr) => {

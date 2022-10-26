@@ -73,7 +73,7 @@ export const renderPosts = (elements, posts, i18n) => {
       </div>
       <ul class="list-group list-group-flush">
         ${posts.map(({ titlePost, linkPost, idPost }) => {
-          return `<li class="list-group-item d-flex justify-content-between border-bottom-0">
+          return `<li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
             <a href="${linkPost}" class="card-link fw-bolder" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
             <button type="button" class="btn btn-outline-primary btn-sm" data-id="${idPost}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
           </li>`
