@@ -21,9 +21,7 @@ const updateData = (watchedState) => {
           const { posts } = parser(response.data.contents);
           return [...acc, ...posts];
         }, []);
-        // console.log(postAll);
         const newPosts = _.differenceBy(postAll, Array.from(watchedState.searсh.posts), 'titlePost');
-        console.log(newPosts);
         if (newPosts.length !== 0) {
           watchedState.searсh.posts = [...newPosts, ...watchedState.searсh.posts];
         }
@@ -42,7 +40,7 @@ const openHolder = (activeId, state, elements) => {
     state.searсh.viewedIds.push(activeId);
 
     const viewedPost = document.querySelector(`a[data-id="${activeId}"]`)
-    viewedPost.classList.add('link-secondary');
+    viewedPost.classList.add('link-secondary', 'fw-normal');
     viewedPost.classList.remove('fw-bolder');
   }
   const activePost = state.searсh.posts.find(({ idPost }) => idPost === activeId);
