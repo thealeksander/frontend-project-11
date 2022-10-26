@@ -1,5 +1,3 @@
-import onChange from "on-change";
-
 export const renderErrors = (elements, error, prevError, i18n) => {
   const rssElement = elements.fields.rss;
   const feedbackEl = elements.feedbackEl;
@@ -63,6 +61,7 @@ export const renderFeed = (elements, feeds, i18n) => {
         <p class="small text-black-50 m-0">${description}</p>
       </div>
     </div>`;
+
   elements.feeds.innerHTML = feedsIneer;
 };
 

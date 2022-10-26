@@ -4,15 +4,18 @@ export default (htmlContent) => {
   try {
     const parser = new DOMParser();
     const parsedHtml = parser.parseFromString(htmlContent, 'application/xml');
-    console.log(parsedHtml);
+
     const title = parsedHtml.querySelector('title').textContent;
     const description = parsedHtml.querySelector('description').textContent;
     const parsedPosts = parsedHtml.querySelectorAll('item');
+
     const posts = Array.from(parsedPosts).map((post) => {
       const titlePost = post.querySelector('title').textContent;
+      const descriptionPost = post.querySelector('description').textContent;
       const linkPost = post.querySelector('link').textContent;
       const idPost = _.uniqueId();
-      return { titlePost, linkPost, idPost };
+
+      return { titlePost, descriptionPost, linkPost, idPost };
     });
     return { title, description, posts };
   } catch (e) {

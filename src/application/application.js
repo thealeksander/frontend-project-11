@@ -13,14 +13,21 @@ import {
   renderPosts,
 } from './render';
 
-const viewedPosts = (newId, state) => {
-  if (!state.searсh.viewedIds.includes(newId)) {
-    state.searсh.viewedIds.push(newId);
+const openHolder = (activeId, state, elements) => {
+  if (!state.searсh.viewedIds.includes(activeId)) {
+    state.searсh.viewedIds.push(activeId);
 
-    const viewedPost = document.querySelector(`a[data-id="${newId}"]`)
+    const viewedPost = document.querySelector(`a[data-id="${activeId}"]`)
     viewedPost.classList.add('link-secondary');
     viewedPost.classList.remove('fw-bolder');
   }
+  const activePost = state.searсh.posts.find(({ idPost }) => idPost === activeId);
+  const { titlePost, descriptionPost, linkPost } = activePost;
+
+  const linkBtn = elements.modal.footer.querySelector('a.btn');
+  elements.modal.title.textContent = titlePost;
+  elements.modal.body.textContent = descriptionPost;
+  linkBtn.href = linkPost;
   return;
 };
 
@@ -59,6 +66,11 @@ export default () => {
       const schema = (watchedLinks) => yup.string().trim().url().notOneOf(watchedLinks);
 
       const elements = {
+        modal: {
+          title: document.querySelector('.modal-title'),
+          body: document.querySelector('.modal-body'),
+          footer: document.querySelector('.modal-footer'),
+        },
         form: document.querySelector('.rss-form'),
         fields: {
           rss: document.querySelector('#url-input'),
@@ -85,7 +97,7 @@ export default () => {
             renderPosts(elements, value, i18n);
             break;
           case 'searсh.activePost':
-            viewedPosts(value, state);
+            openHolder(value, state, elements);
             break;
           default:
             break;
@@ -111,8 +123,6 @@ export default () => {
             const { title, description, posts }  = parser(response.data.contents);
             watchedState.searсh.feeds = { title, description };
             watchedState.searсh.posts = [ ...posts ];
-            // console.log(watchedState.searсh.feeds);
-            // console.log(watchedState.searсh.posts);
             watchedState.searсh.mode = 'successfully';
 
             const links = elements.posts.querySelectorAll('a.card-link');
@@ -132,11 +142,11 @@ export default () => {
             });
           })
           .catch((err) => {
-            console.log(err.name);
+            // console.log(err.name);
             if (err.name === 'AxiosError') {
               watchedState.searсh.error = 'network';
             } else {
-              console.log(err.message);
+              // console.log(err.message);
               watchedState.searсh.error = err.message;
             }
             watchedState.searсh.mode = 'error';
