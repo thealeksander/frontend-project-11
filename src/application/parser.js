@@ -16,11 +16,20 @@ export default (htmlContent) => {
       const linkPost = post.querySelector('link').textContent;
       const idPost = _.uniqueId();
 
-      return { titlePost, descriptionPost, linkPost, idPost };
+      return {
+        titlePost,
+        descriptionPost,
+        linkPost,
+        idPost
+      };
     });
-    return { idFeed, title, description, posts };
+    return {
+      idFeed,
+      title,
+      description,
+      posts
+    };
   } catch (e) {
     throw new Error('inValidRss');
   }
 };
-
