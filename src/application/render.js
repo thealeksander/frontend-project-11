@@ -70,13 +70,13 @@ export const renderFeed = (elements, feeds, i18n) => {
 export const renderPosts = (elements, posts, i18n, state, openHolder) => {
   const postsInner =
     `<div class="card border-0">
-      <div class="card-body fs-4 fw-semibold border-0">
-        ${i18n.t('posts.title')}
+      <div class="card-body">
+        <h2 class="card-title h4">${i18n.t('posts.title')}</h2>
       </div>
-      <ul class="list-group list-group-flush">
+      <ul class="list-group border-0 rounded-0">
         ${posts.map(({ titlePost, linkPost, idPost }) => {
           return `<li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
-            <a href="${linkPost}" class="card-link ${state.searсh.viewedIds.includes(idPost) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
+            <a href="${linkPost}" class="${state.searсh.viewedIds.includes(idPost) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
             <button type="button" class="btn btn-outline-primary btn-sm" data-id="${idPost}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
           </li>`
         }).join('')}
@@ -85,7 +85,7 @@ export const renderPosts = (elements, posts, i18n, state, openHolder) => {
 
   elements.posts.innerHTML = postsInner;
 
-  const links = elements.posts.querySelectorAll('a.card-link');
+  const links = elements.posts.querySelectorAll('a');
   links.forEach((link) => {
     link.addEventListener('click', (event) => {
       const id = event.target.dataset.id;
