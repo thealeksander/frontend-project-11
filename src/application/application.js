@@ -15,7 +15,6 @@ import {
 
 const updateData = (watchedState) => {
   const cb = () => {
-    console.log('Ok!');
     Promise.all(watchedState.searсh.watchedLinks.map((link) => axios.get(buildPath(link))))
       .then((responseArr) => {
         const postAll =  responseArr.reduce((acc, response) => {
@@ -25,6 +24,7 @@ const updateData = (watchedState) => {
         const newPosts = _.differenceBy(postAll, Array.from(watchedState.searсh.posts), 'titlePost');
         if (newPosts.length !== 0) {
           watchedState.searсh.posts = [...newPosts, ...watchedState.searсh.posts];
+          console.log('Update!');
         }
       })
       .catch((e) => {
@@ -61,7 +61,7 @@ export default () => {
       mode: 'filling',
       data: {},
       watchedLinks: [],
-      feeds: {},
+      feeds: [],
       posts: [],
       activePost: null,
       viewedIds: [], //новый rss не видит
@@ -85,7 +85,7 @@ export default () => {
         },  
       });
 
-      const schema = (watchedLinks) => yup.string().trim().url().notOneOf(watchedLinks);
+      const schema = (watchedLinks) => yup.string().url().required().notOneOf(watchedLinks);       
 
       const elements = {
         modal: {
@@ -133,22 +133,21 @@ export default () => {
     
         watchedState.searсh.mode = 'sending';
         const formData = new FormData(event.target);
-        const url = formData.get('url');
+        const url = formData.get('url').trim();
     
         schema(watchedState.searсh.watchedLinks)
-          .validate(url, { abortEarly: false })
+          .validate(url)
           .then((urlLink) => {
-            console.log('what?!');
             watchedState.searсh.error = null;
-            watchedState.searсh.watchedLinks.push(urlLink);
-            // console.log(watchedState.searсh.watchedLinks);
             return axios.get(buildPath(urlLink));
           })
           .then((response) => {
-            // console.log(response);
+            console.log(watchedState.searсh.watchedLinks);
             const { title, description, posts }  = parser(response.data.contents);
-            watchedState.searсh.feeds = { title, description };
+            console.log([...watchedState.searсh.feeds, { title, description }]);
+            watchedState.searсh.feeds = [...watchedState.searсh.feeds, { title, description }]; //add id
             watchedState.searсh.posts = [ ...posts ];
+            watchedState.searсh.watchedLinks.push(url);
             watchedState.searсh.mode = 'successfully';
 
             const links = elements.posts.querySelectorAll('a.card-link');
@@ -176,7 +175,7 @@ export default () => {
               watchedState.searсh.error = err.message;
             }
             watchedState.searсh.mode = 'error';
-            console.log(watchedState.searсh.watchedLinks);
+            // console.log(watchedState.searсh.watchedLinks);
           });
       });
     });

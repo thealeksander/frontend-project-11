@@ -6,6 +6,7 @@ export default (htmlContent) => {
     const parsedHtml = parser.parseFromString(htmlContent, 'application/xml');
 
     const title = parsedHtml.querySelector('title').textContent;
+    const idFeed = _.uniqueId();
     const description = parsedHtml.querySelector('description').textContent;
     const parsedPosts = parsedHtml.querySelectorAll('item');
 
@@ -17,7 +18,7 @@ export default (htmlContent) => {
 
       return { titlePost, descriptionPost, linkPost, idPost };
     });
-    return { title, description, posts };
+    return { idFeed, title, description, posts };
   } catch (e) {
     throw new Error('inValidRss');
   }

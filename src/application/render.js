@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const renderErrors = (elements, error, prevError, i18n) => {
   const rssElement = elements.fields.rss;
   const feedbackEl = elements.feedbackEl;
@@ -52,7 +54,7 @@ export const handleProcessState = (elements, value, i18n) => {
 };
 
 export const renderFeed = (elements, feeds, i18n) => {
-  const { title, description } = feeds;
+  const { title, description } = _.last(feeds);
   const feedsIneer =
     `<div class="card border-0">
       <div class="card-body">
