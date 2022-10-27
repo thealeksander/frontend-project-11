@@ -20,14 +20,14 @@ export default (htmlContent) => {
         titlePost,
         descriptionPost,
         linkPost,
-        idPost
+        idPost,
       };
     });
     return {
       idFeed,
       title,
       description,
-      posts
+      posts,
     };
   } catch (e) {
     throw new Error('inValidRss');
