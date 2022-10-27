@@ -15,6 +15,7 @@ import {
 
 const updateData = (watchedState) => {
   const cb = () => {
+    console.log('setTimeout');
     Promise.all(watchedState.searсh.watchedLinks.map((link) => axios.get(buildPath(link))))
       .then((responseArr) => {
         const postAll =  responseArr.reduce((acc, response) => {
@@ -116,7 +117,7 @@ export default () => {
             renderFeed(elements, value, i18n);
             break;
           case 'searсh.posts':
-            renderPosts(elements, value, i18n, state);
+            renderPosts(elements, value, i18n, state, openHolder);
             break;
           case 'searсh.activePost':
             openHolder(value, state, elements);
@@ -146,25 +147,25 @@ export default () => {
             const { title, description, posts }  = parser(response.data.contents);
             console.log([...watchedState.searсh.feeds, { title, description }]);
             watchedState.searсh.feeds = [...watchedState.searсh.feeds, { title, description }]; //add id
-            watchedState.searсh.posts = [ ...posts ];
+            watchedState.searсh.posts = [ ...posts, ...watchedState.searсh.posts];
             watchedState.searсh.watchedLinks.push(url);
             watchedState.searсh.mode = 'successfully';
 
-            const links = elements.posts.querySelectorAll('a.card-link');
-            links.forEach((link) => {
-              link.addEventListener('click', (event) => {
-                const linkId = event.target.dataset.id;
-                watchedState.searсh.activePost = linkId;
-              });
-            });
+            // const links = elements.posts.querySelectorAll('a.card-link');
+            // links.forEach((link) => {
+            //   link.addEventListener('click', (event) => {
+            //     const linkId = event.target.dataset.id;
+            //     watchedState.searсh.activePost = linkId;
+            //   });
+            // });
 
-            const btnsLink = elements.posts.querySelectorAll('.btn');
-            btnsLink.forEach((btn) => {
-              btn.addEventListener('click', (event) => {
-                const id = event.target.dataset.id;
-                watchedState.searсh.activePost = id;
-              });
-            });
+            // const btnsLink = elements.posts.querySelectorAll('.btn');
+            // btnsLink.forEach((btn) => {
+            //   btn.addEventListener('click', (event) => {
+            //     const id = event.target.dataset.id;
+            //     watchedState.searсh.activePost = id;
+            //   });
+            // });
           })
           .catch((err) => {
             // console.log(err.name);

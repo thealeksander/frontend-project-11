@@ -67,7 +67,7 @@ export const renderFeed = (elements, feeds, i18n) => {
   elements.feeds.innerHTML = feedsIneer;
 };
 
-export const renderPosts = (elements, posts, i18n, state) => {
+export const renderPosts = (elements, posts, i18n, state, openHolder) => {
   const postsInner =
     `<div class="card border-0">
       <div class="card-body fs-4 fw-semibold border-0">
@@ -84,4 +84,20 @@ export const renderPosts = (elements, posts, i18n, state) => {
     </div>`;
 
   elements.posts.innerHTML = postsInner;
+
+  const links = elements.posts.querySelectorAll('a.card-link');
+  links.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const id = event.target.dataset.id;
+      openHolder(id, state, elements);
+    });
+  });
+
+  const btnsLink = elements.posts.querySelectorAll('.btn');
+  btnsLink.forEach((btn) => {
+    btn.addEventListener('click', (event) => {
+      const id = event.target.dataset.id;
+      openHolder(id, state, elements);
+    });
+  });
 };
