@@ -80,7 +80,7 @@ export const renderPosts = (elements, posts, i18n, state, openHolder) => {
             <a href="${linkPost}" class="${state.searсh.viewedIds.includes(idPost) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
             <button type="button" class="btn btn-outline-primary btn-sm" data-id="${idPost}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
           </li>`)
-          .join('')}
+        .join('')}
       </ul>  
     </div>`;
 
