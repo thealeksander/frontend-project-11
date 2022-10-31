@@ -89,7 +89,8 @@ export default () => {
         posts: document.querySelector('.posts'),
       };
 
-      const watchedState = onChange(state, (path, value, prevValue) => render(path, 
+      const watchedState = onChange(state, (path, value, prevValue) => render(
+        path,
         value,
         prevValue,
         elements,
@@ -117,16 +118,15 @@ export default () => {
               ({
                 idPost: _.uniqueId(),
                 ...post,
-              })
-            );
+              }));
 
             watchedState.searсh.contents.feeds = [
               ...watchedState.searсh.contents.feeds,
-              { title, description }
+              { title, description },
             ];
             watchedState.searсh.contents.posts = [
               ...postsWithId,
-              ...watchedState.searсh.contents.posts
+              ...watchedState.searсh.contents.posts,
             ];
             watchedState.searсh.form.watchedLinks.push(url);
             watchedState.searсh.form.mode = 'successfully';
