@@ -96,7 +96,7 @@ export default () => {
         elements,
         i18n,
         state,
-        ));
+      ));
 
       updateData(watchedState);
 
@@ -116,8 +116,8 @@ export default () => {
           .then((response) => {
             const { title, description, posts } = parser(response.data.contents);
             const postsWithId = posts.map((post) => ({
-                idPost: _.uniqueId(),
-                ...post,
+              idPost: _.uniqueId(),
+              ...post,
             }));
 
             watchedState.searсh.contents.feeds = [
