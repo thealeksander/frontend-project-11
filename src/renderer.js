@@ -1,14 +1,14 @@
 import _ from 'lodash';
 
 const openHolder = (activeId, state, elements) => {
-  if (!state.searсh.viewedIds.includes(activeId)) {
-    state.searсh.viewedIds.push(activeId);
+  if (!state.searсh.contents.viewedPosts.includes(activeId)) {
+    state.searсh.contents.viewedPosts.push(activeId);
 
     const viewedPost = document.querySelector(`a[data-id="${activeId}"]`);
     viewedPost.classList.add('link-secondary', 'fw-normal');
     viewedPost.classList.remove('fw-bold');
   }
-  const activePost = state.searсh.posts.find(({ idPost }) => idPost === activeId);
+  const activePost = state.searсh.contents.posts.find(({ idPost }) => idPost === activeId);
   const { titlePost, descriptionPost, linkPost } = activePost;
 
   const linkBtn = elements.modal.footer.querySelector('a.btn');
@@ -18,6 +18,7 @@ const openHolder = (activeId, state, elements) => {
 };
 
 const renderErrors = (elements, error, prevError, i18n) => {
+  console.log(error);
   const rssElement = elements.fields.rss;
   const { feedbackEl } = elements;
   if (feedbackEl.classList.contains('text-success')) {
@@ -46,6 +47,7 @@ const renderErrors = (elements, error, prevError, i18n) => {
 };
 
 const handleProcessState = (elements, value, i18n) => {
+  console.log(value);
   const { feedbackEl } = elements;
 
   switch (value) {
@@ -94,7 +96,7 @@ const renderPosts = (elements, posts, i18n, state) => {
       <ul class="list-group border-0 rounded-0">
         ${posts.map(({ titlePost, linkPost, idPost }) => `
           <li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
-            <a href="${linkPost}" class="${state.searсh.viewedIds.includes(idPost) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
+            <a href="${linkPost}" class="${state.searсh.contents.viewedPosts.includes(idPost) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
             <button type="button" class="btn btn-outline-primary btn-sm" data-id="${idPost}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
           </li>`).join('')}
       </ul>  
@@ -120,18 +122,21 @@ const renderPosts = (elements, posts, i18n, state) => {
 };
 
 export const render = (path, value, prevValue, elements, i18n, state) => {
-  console.log(path);
+  console.log(path, value);
   switch (path) {
-    case 'searсh.error':
+    case 'searсh.form.error':
       renderErrors(elements, value, prevValue, i18n);
       break;
-    case 'searсh.mode':
+    case 'searсh.contents.error':
+      renderErrors(elements, value, prevValue, i18n);
+      break;
+    case 'searсh.form.mode':
       handleProcessState(elements, value, i18n);
       break;
-    case 'searсh.feeds':
+    case 'searсh.contents.feeds':
       renderFeed(elements, value, i18n);
       break;
-    case 'searсh.posts':
+    case 'searсh.contents.posts':
       renderPosts(elements, value, i18n, state);
       break;
     default:

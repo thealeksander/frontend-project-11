@@ -6,7 +6,6 @@ export default (htmlContent) => {
     const parsedHtml = parser.parseFromString(htmlContent, 'application/xml');
 
     const title = parsedHtml.querySelector('title').textContent;
-    const idFeed = _.uniqueId();
     const description = parsedHtml.querySelector('description').textContent;
     const parsedPosts = parsedHtml.querySelectorAll('item');
 
@@ -14,17 +13,14 @@ export default (htmlContent) => {
       const titlePost = post.querySelector('title').textContent;
       const descriptionPost = post.querySelector('description').textContent;
       const linkPost = post.querySelector('link').textContent;
-      const idPost = _.uniqueId();
 
       return {
         titlePost,
         descriptionPost,
         linkPost,
-        idPost,
       };
     });
     return {
-      idFeed,
       title,
       description,
       posts,

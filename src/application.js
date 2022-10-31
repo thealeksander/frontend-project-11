@@ -17,15 +17,15 @@ const buildPath  = (url) => {
 const updateData = (watchedState) => {
   const cb = () => {
     console.log('setTimeout');
-    Promise.all(watchedState.searсh.watchedLinks.map((link) => axios.get(buildPath(link))))
+    Promise.all(watchedState.searсh.form.watchedLinks.map((link) => axios.get(buildPath(link))))
       .then((responseArr) => {
         const postAll = responseArr.reduce((acc, response) => {
           const { posts } = parser(response.data.contents);
           return [...acc, ...posts];
         }, []);
-        const newPosts = _.differenceBy(postAll, Array.from(watchedState.searсh.posts), 'titlePost');
+        const newPosts = _.differenceBy(postAll, Array.from(watchedState.searсh.contents.posts), 'titlePost');
         if (newPosts.length !== 0) {
-          watchedState.searсh.posts = [...newPosts, ...watchedState.searсh.posts];
+          watchedState.searсh.contents.posts = [...newPosts, ...watchedState.searсh.contents.posts];
           console.log('Update!');
         }
       })
@@ -38,23 +38,26 @@ const updateData = (watchedState) => {
 };
 
 export default () => {
-  const defaultLg = 'ru';
   const state = {
-    lng: defaultLg,
     searсh: {
-      mode: 'filling',
-      data: {},
-      watchedLinks: [],
-      feeds: [],
-      posts: [],
-      viewedIds: [],
-      error: null,
+      form: {
+        mode: 'filling',
+        watchedLinks: [],
+        error: null,
+      },
+      contents: {
+        feeds: [],
+        posts: [],
+        viewedPosts: [],
+        error: null,
+      },
     },
   };
 
   const i18n = i18next.createInstance();
+  const defaultLg = 'ru';
   i18n.init({
-    lng: state.lng,
+    lng: defaultLg,
     debug: true,
     resources,
   })
@@ -93,32 +96,39 @@ export default () => {
       elements.form.addEventListener('submit', (event) => {
         event.preventDefault();
 
-        watchedState.searсh.mode = 'sending';
+        watchedState.searсh.form.mode = 'sending';
         const formData = new FormData(event.target);
         const url = formData.get('url').trim();
 
-        schema(watchedState.searсh.watchedLinks)
+        schema(watchedState.searсh.form.watchedLinks)
           .validate(url)
           .then((urlLink) => {
-            watchedState.searсh.error = null;
+            watchedState.searсh.form.error = null;
             return axios.get(buildPath(urlLink));
           })
           .then((response) => {
-            console.log(watchedState.searсh.watchedLinks);
             const { title, description, posts } = parser(response.data.contents);
-            console.log([...watchedState.searсh.feeds, { title, description }]);
-            watchedState.searсh.feeds = [...watchedState.searсh.feeds, { title, description }];
-            watchedState.searсh.posts = [...posts, ...watchedState.searсh.posts];
-            watchedState.searсh.watchedLinks.push(url);
-            watchedState.searсh.mode = 'successfully';
+            const postsWithId = posts.map((post) => {
+              return {
+                idPost: _.uniqueId(),
+                ...post,
+              };
+            });
+            console.log(postsWithId);
+
+            watchedState.searсh.contents.feeds = [...watchedState.searсh.contents.feeds, { title, description }];
+            watchedState.searсh.contents.posts = [...postsWithId, ...watchedState.searсh.contents.posts];
+            watchedState.searсh.form.watchedLinks.push(url);
+            watchedState.searсh.form.mode = 'successfully';
           })
           .catch((err) => {
+            console.log(err, err.name);
             if (err.name === 'AxiosError') {
-              watchedState.searсh.error = 'network';
+              watchedState.searсh.contents.error = 'network';
             } else {
-              watchedState.searсh.error = err.message;
+              watchedState.searсh.form.error = err.message;
             }
-            watchedState.searсh.mode = 'error';
+            watchedState.searсh.form.mode = 'error';
           });
       });
     });
