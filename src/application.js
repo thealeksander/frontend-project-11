@@ -3,15 +3,16 @@ import * as yup from 'yup';
 import i18next from 'i18next';
 import onChange from 'on-change';
 import axios from 'axios';
-import resources from '../locales/index';
-import buildPath from './path';
+import resources from './locales/index';
 import parser from './parser';
-import {
-  renderErrors,
-  handleProcessState,
-  renderFeed,
-  renderPosts,
-} from './render';
+import { render } from './renderer';
+
+const buildPath  = (url) => {
+  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app');
+  urlWithProxy.searchParams.set('url', url);
+  urlWithProxy.searchParams.set('disableCache', 'true');
+  return urlWithProxy.toString();
+};
 
 const updateData = (watchedState) => {
   const cb = () => {
@@ -36,23 +37,6 @@ const updateData = (watchedState) => {
   setTimeout(cb, 5000);
 };
 
-const openHolder = (activeId, state, elements) => {
-  if (!state.searсh.viewedIds.includes(activeId)) {
-    state.searсh.viewedIds.push(activeId);
-
-    const viewedPost = document.querySelector(`a[data-id="${activeId}"]`);
-    viewedPost.classList.add('link-secondary', 'fw-normal');
-    viewedPost.classList.remove('fw-bold');
-  }
-  const activePost = state.searсh.posts.find(({ idPost }) => idPost === activeId);
-  const { titlePost, descriptionPost, linkPost } = activePost;
-
-  const linkBtn = elements.modal.footer.querySelector('a.btn');
-  elements.modal.title.textContent = titlePost;
-  elements.modal.body.textContent = descriptionPost;
-  linkBtn.href = linkPost;
-};
-
 export default () => {
   const defaultLg = 'ru';
   const state = {
@@ -63,7 +47,6 @@ export default () => {
       watchedLinks: [],
       feeds: [],
       posts: [],
-      activePost: null,
       viewedIds: [],
       error: null,
     },
@@ -103,28 +86,7 @@ export default () => {
         posts: document.querySelector('.posts'),
       };
 
-      const watchedState = onChange(state, (path, value, prevValue) => {
-        console.log(path);
-        switch (path) {
-          case 'searсh.error':
-            renderErrors(elements, value, prevValue, i18n);
-            break;
-          case 'searсh.mode':
-            handleProcessState(elements, value, i18n);
-            break;
-          case 'searсh.feeds':
-            renderFeed(elements, value, i18n);
-            break;
-          case 'searсh.posts':
-            renderPosts(elements, value, i18n, state, openHolder);
-            break;
-          case 'searсh.activePost':
-            openHolder(value, state, elements);
-            break;
-          default:
-            break;
-        }
-      });
+      const watchedState = onChange(state, (path, value, prevValue) => render(path, value, prevValue, elements, i18n, state));
 
       updateData(watchedState);
 

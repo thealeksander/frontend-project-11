@@ -1,6 +1,23 @@
 import _ from 'lodash';
 
-export const renderErrors = (elements, error, prevError, i18n) => {
+const openHolder = (activeId, state, elements) => {
+  if (!state.searсh.viewedIds.includes(activeId)) {
+    state.searсh.viewedIds.push(activeId);
+
+    const viewedPost = document.querySelector(`a[data-id="${activeId}"]`);
+    viewedPost.classList.add('link-secondary', 'fw-normal');
+    viewedPost.classList.remove('fw-bold');
+  }
+  const activePost = state.searсh.posts.find(({ idPost }) => idPost === activeId);
+  const { titlePost, descriptionPost, linkPost } = activePost;
+
+  const linkBtn = elements.modal.footer.querySelector('a.btn');
+  elements.modal.title.textContent = titlePost;
+  elements.modal.body.textContent = descriptionPost;
+  linkBtn.href = linkPost;
+};
+
+const renderErrors = (elements, error, prevError, i18n) => {
   const rssElement = elements.fields.rss;
   const { feedbackEl } = elements;
   if (feedbackEl.classList.contains('text-success')) {
@@ -28,7 +45,7 @@ export const renderErrors = (elements, error, prevError, i18n) => {
   feedbackEl.textContent = i18n.t(`feedbackText.${error}`);
 };
 
-export const handleProcessState = (elements, value, i18n) => {
+const handleProcessState = (elements, value, i18n) => {
   const { feedbackEl } = elements;
 
   switch (value) {
@@ -54,7 +71,7 @@ export const handleProcessState = (elements, value, i18n) => {
   }
 };
 
-export const renderFeed = (elements, feeds, i18n) => {
+const renderFeed = (elements, feeds, i18n) => {
   const { title, description } = _.last(feeds);
   const feedsIneer = `
     <div class="card border-0">
@@ -68,7 +85,7 @@ export const renderFeed = (elements, feeds, i18n) => {
   elements.feeds.innerHTML = feedsIneer;
 };
 
-export const renderPosts = (elements, posts, i18n, state, openHolder) => {
+const renderPosts = (elements, posts, i18n, state) => {
   const postsInner = `
     <div class="card border-0">
       <div class="card-body">
@@ -100,4 +117,24 @@ export const renderPosts = (elements, posts, i18n, state, openHolder) => {
       openHolder(id, state, elements);
     });
   });
+};
+
+export const render = (path, value, prevValue, elements, i18n, state) => {
+  console.log(path);
+  switch (path) {
+    case 'searсh.error':
+      renderErrors(elements, value, prevValue, i18n);
+      break;
+    case 'searсh.mode':
+      handleProcessState(elements, value, i18n);
+      break;
+    case 'searсh.feeds':
+      renderFeed(elements, value, i18n);
+      break;
+    case 'searсh.posts':
+      renderPosts(elements, value, i18n, state);
+      break;
+    default:
+      break;
+  }
 };
