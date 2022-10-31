@@ -16,7 +16,7 @@ const buildPath  = (url) => {
 
 const updateData = (watchedState) => {
   const cb = () => {
-    console.log('setTimeout');
+    // console.log('setTimeout');
     Promise.all(watchedState.searсh.form.watchedLinks.map((link) => axios.get(buildPath(link))))
       .then((responseArr) => {
         const postAll = responseArr.reduce((acc, response) => {
@@ -26,7 +26,7 @@ const updateData = (watchedState) => {
         const newPosts = _.differenceBy(postAll, Array.from(watchedState.searсh.contents.posts), 'titlePost');
         if (newPosts.length !== 0) {
           watchedState.searсh.contents.posts = [...newPosts, ...watchedState.searсh.contents.posts];
-          console.log('Update!');
+          // console.log('Update!');
         }
       })
       .catch((e) => {
@@ -114,7 +114,6 @@ export default () => {
                 ...post,
               };
             });
-            console.log(postsWithId);
 
             watchedState.searсh.contents.feeds = [...watchedState.searсh.contents.feeds, { title, description }];
             watchedState.searсh.contents.posts = [...postsWithId, ...watchedState.searсh.contents.posts];
@@ -122,7 +121,6 @@ export default () => {
             watchedState.searсh.form.mode = 'successfully';
           })
           .catch((err) => {
-            console.log(err, err.name);
             if (err.name === 'AxiosError') {
               watchedState.searсh.contents.error = 'network';
             } else {

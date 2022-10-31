@@ -18,7 +18,6 @@ const openHolder = (activeId, state, elements) => {
 };
 
 const renderErrors = (elements, error, prevError, i18n) => {
-  console.log(error);
   const rssElement = elements.fields.rss;
   const { feedbackEl } = elements;
   if (feedbackEl.classList.contains('text-success')) {
@@ -122,7 +121,7 @@ const renderPosts = (elements, posts, i18n, state) => {
 };
 
 export const render = (path, value, prevValue, elements, i18n, state) => {
-  console.log(path, value);
+  // console.log(path, value);
   switch (path) {
     case 'searсh.form.error':
       renderErrors(elements, value, prevValue, i18n);
