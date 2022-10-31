@@ -120,7 +120,7 @@ const renderPosts = (elements, posts, i18n, state) => {
   });
 };
 
-export const render = (path, value, prevValue, elements, i18n, state) => {
+export default (path, value, prevValue, elements, i18n, state) => {
   // console.log(path, value);
   switch (path) {
     case 'searсh.form.error':

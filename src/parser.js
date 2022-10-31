@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export default (htmlContent) => {
   try {
     const parser = new DOMParser();

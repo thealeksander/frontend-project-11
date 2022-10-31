@@ -5,9 +5,9 @@ import onChange from 'on-change';
 import axios from 'axios';
 import resources from './locales/index';
 import parser from './parser';
-import { render } from './renderer';
+import render from './renderer';
 
-const buildPath  = (url) => {
+const buildPath = (url) => {
   const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app');
   urlWithProxy.searchParams.set('url', url);
   urlWithProxy.searchParams.set('disableCache', 'true');
@@ -89,7 +89,12 @@ export default () => {
         posts: document.querySelector('.posts'),
       };
 
-      const watchedState = onChange(state, (path, value, prevValue) => render(path, value, prevValue, elements, i18n, state));
+      const watchedState = onChange(state, (path, value, prevValue) => render(path, 
+        value,
+        prevValue,
+        elements,
+        i18n,
+        state));
 
       updateData(watchedState);
 
@@ -108,15 +113,21 @@ export default () => {
           })
           .then((response) => {
             const { title, description, posts } = parser(response.data.contents);
-            const postsWithId = posts.map((post) => {
-              return {
+            const postsWithId = posts.map((post) =>
+              ({
                 idPost: _.uniqueId(),
                 ...post,
-              };
-            });
+              })
+            );
 
-            watchedState.searсh.contents.feeds = [...watchedState.searсh.contents.feeds, { title, description }];
-            watchedState.searсh.contents.posts = [...postsWithId, ...watchedState.searсh.contents.posts];
+            watchedState.searсh.contents.feeds = [
+              ...watchedState.searсh.contents.feeds,
+              { title, description }
+            ];
+            watchedState.searсh.contents.posts = [
+              ...postsWithId,
+              ...watchedState.searсh.contents.posts
+            ];
             watchedState.searсh.form.watchedLinks.push(url);
             watchedState.searсh.form.mode = 'successfully';
           })
