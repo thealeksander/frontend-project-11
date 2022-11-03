@@ -105,7 +105,7 @@ export default () => {
             }
           });
         });
-   
+
         const btnsLink = elements.posts.querySelectorAll('.btn');
         btnsLink.forEach((btn) => {
           btn.addEventListener('click', (event) => {
