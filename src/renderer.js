@@ -1,14 +1,12 @@
 import _ from 'lodash';
 
 const openHolder = (activeId, state, elements) => {
-  if (!state.searсh.contents.viewedPosts.includes(activeId)) {
-    state.searсh.contents.viewedPosts.push(activeId);
-
+  if (!state.contents.viewedPosts.includes(activeId)) {
     const viewedPost = document.querySelector(`a[data-id="${activeId}"]`);
     viewedPost.classList.add('link-secondary', 'fw-normal');
     viewedPost.classList.remove('fw-bold');
   }
-  const activePost = state.searсh.contents.posts.find(({ idPost }) => idPost === activeId);
+  const activePost = state.contents.posts.find(({ idPost }) => idPost === activeId);
   const { titlePost, descriptionPost, linkPost } = activePost;
 
   const linkBtn = elements.modal.footer.querySelector('a.btn');
@@ -46,7 +44,6 @@ const renderErrors = (elements, error, prevError, i18n) => {
 };
 
 const handleProcessState = (elements, value, i18n) => {
-  console.log(value);
   const { feedbackEl } = elements;
 
   switch (value) {
@@ -95,48 +92,35 @@ const renderPosts = (elements, posts, i18n, state) => {
       <ul class="list-group border-0 rounded-0">
         ${posts.map(({ titlePost, linkPost, idPost }) => `
           <li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
-            <a href="${linkPost}" class="${state.searсh.contents.viewedPosts.includes(idPost) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
+            <a href="${linkPost}" class="${state.contents.viewedPosts.includes(idPost) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
             <button type="button" class="btn btn-outline-primary btn-sm" data-id="${idPost}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
           </li>`).join('')}
       </ul>  
     </div>`;
 
   elements.posts.innerHTML = postsInner;
-
-  const links = elements.posts.querySelectorAll('a');
-  links.forEach((link) => {
-    link.addEventListener('click', (event) => {
-      const { id } = event.target.dataset;
-      openHolder(id, state, elements);
-    });
-  });
-
-  const btnsLink = elements.posts.querySelectorAll('.btn');
-  btnsLink.forEach((btn) => {
-    btn.addEventListener('click', (event) => {
-      const { id } = event.target.dataset;
-      openHolder(id, state, elements);
-    });
-  });
 };
 
 export default (path, value, prevValue, elements, i18n, state) => {
   // console.log(path, value);
   switch (path) {
-    case 'searсh.form.error':
+    case 'form.error':
       renderErrors(elements, value, prevValue, i18n);
       break;
-    case 'searсh.contents.error':
+    case 'contents.error':
       renderErrors(elements, value, prevValue, i18n);
       break;
-    case 'searсh.form.mode':
+    case 'form.mode':
       handleProcessState(elements, value, i18n);
       break;
-    case 'searсh.contents.feeds':
+    case 'contents.feeds':
       renderFeed(elements, value, i18n);
       break;
-    case 'searсh.contents.posts':
+    case 'contents.posts':
       renderPosts(elements, value, i18n, state);
+      break;
+    case 'contents.activePost':
+      openHolder(value, state, elements);
       break;
     default:
       break;
