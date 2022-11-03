@@ -8,12 +8,12 @@ export default (htmlContent) => {
     const title = parsedHtml.querySelector('title').textContent;
     const description = parsedHtml.querySelector('description').textContent;
     const parsedPosts = parsedHtml.querySelectorAll('item');
-  
+
     const posts = Array.from(parsedPosts).map((post) => {
       const titlePost = post.querySelector('title').textContent;
       const descriptionPost = post.querySelector('description').textContent;
       const linkPost = post.querySelector('link').textContent;
-  
+
       return {
         titlePost,
         descriptionPost,

@@ -93,7 +93,7 @@ export default () => {
       };
 
       const watchedState = onChange(state, (path, value, prevValue) => {
-        render( path, value, prevValue, elements, i18n, state);
+        render(path, value, prevValue, elements, i18n, state);
 
         const links = elements.posts.querySelectorAll('a');
         links.forEach((link) => {
@@ -105,7 +105,7 @@ export default () => {
             }
           });
         });
-      
+   
         const btnsLink = elements.posts.querySelectorAll('.btn');
         btnsLink.forEach((btn) => {
           btn.addEventListener('click', (event) => {
