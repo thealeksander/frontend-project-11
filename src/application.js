@@ -1,3 +1,4 @@
+import 'bootstrap';
 import _ from 'lodash';
 import * as yup from 'yup';
 import i18next from 'i18next';
@@ -16,14 +17,13 @@ const buildPath = (url) => {
 
 const updateData = (watchedState) => {
   const cb = () => {
-    // console.log('setTimeout');
     const savedUrls = watchedState.contents.feeds.map((el) => el.url);
     Promise.all(savedUrls.map((link) => axios.get(buildPath(link))))
       .then((responseArr) => {
         const postAll = responseArr.reduce((acc, response) => {
           const { posts } = parser(response.data.contents);
           const postsWithId = posts.map((post) => ({
-            idPost: _.uniqueId(),
+            id: _.uniqueId(),
             ...post,
           }));
           return [...acc, ...postsWithId];
@@ -31,7 +31,6 @@ const updateData = (watchedState) => {
         const newPosts = _.differenceBy(postAll, Array.from(watchedState.contents.posts), 'titlePost');
         if (newPosts.length !== 0) {
           watchedState.contents.posts = [...newPosts, ...watchedState.contents.posts];
-          // console.log('Update!');
         }
       })
       .catch((e) => {
@@ -95,26 +94,12 @@ export default () => {
       const watchedState = onChange(state, (path, value, prevValue) => {
         render(path, value, prevValue, elements, i18n, state);
 
-        const links = elements.posts.querySelectorAll('a');
-        links.forEach((link) => {
-          link.addEventListener('click', (event) => {
-            const { id } = event.target.dataset;
-            watchedState.contents.activePost = id;
-            if (!watchedState.contents.viewedPosts.includes(id)) {
-              watchedState.contents.viewedPosts = [...watchedState.contents.viewedPosts, id];
-            }
-          });
-        });
-
-        const btnsLink = elements.posts.querySelectorAll('.btn');
-        btnsLink.forEach((btn) => {
-          btn.addEventListener('click', (event) => {
-            const { id } = event.target.dataset;
-            watchedState.contents.activePost = id;
-            if (!watchedState.contents.viewedPosts.includes(id)) {
-              watchedState.contents.viewedPosts = [...watchedState.contents.viewedPosts, id];
-            }
-          });
+        elements.posts.addEventListener('click', (event) => {
+          const { id } = event.target.dataset;
+          watchedState.contents.activePost = id;
+          if (!watchedState.contents.viewedPosts.includes(id)) {
+            watchedState.contents.viewedPosts = [...watchedState.contents.viewedPosts, id];
+          }
         });
       });
 
@@ -137,7 +122,7 @@ export default () => {
           .then((response) => {
             const { title, description, posts } = parser(response.data.contents);
             const postsWithId = posts.map((post) => ({
-              idPost: _.uniqueId(),
+              id: _.uniqueId(),
               ...post,
             }));
 
@@ -149,7 +134,6 @@ export default () => {
               ...postsWithId,
               ...watchedState.contents.posts,
             ];
-            console.log(watchedState.contents.feeds);
             watchedState.form.mode = 'successfully';
           })
           .catch((err) => {

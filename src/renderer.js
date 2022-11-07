@@ -6,7 +6,7 @@ const openHolder = (activeId, state, elements) => {
     viewedPost.classList.add('link-secondary', 'fw-normal');
     viewedPost.classList.remove('fw-bold');
   }
-  const activePost = state.contents.posts.find(({ idPost }) => idPost === activeId);
+  const activePost = state.contents.posts.find(({ id }) => id === activeId);
   const { titlePost, descriptionPost, linkPost } = activePost;
 
   const linkBtn = elements.modal.footer.querySelector('a.btn');
@@ -90,10 +90,10 @@ const renderPosts = (elements, posts, i18n, state) => {
         <h2 class="card-title h4">${i18n.t('posts.title')}</h2>
       </div>
       <ul class="list-group border-0 rounded-0">
-        ${posts.map(({ titlePost, linkPost, idPost }) => `
+        ${posts.map(({ titlePost, linkPost, id }) => `
           <li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
-            <a href="${linkPost}" class="${state.contents.viewedPosts.includes(idPost) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${idPost}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
-            <button type="button" class="btn btn-outline-primary btn-sm" data-id="${idPost}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
+            <a href="${linkPost}" class="${state.contents.viewedPosts.includes(id) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${id}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
+            <button type="button" class="btn btn-outline-primary btn-sm" data-id="${id}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
           </li>`).join('')}
       </ul>  
     </div>`;
@@ -102,7 +102,6 @@ const renderPosts = (elements, posts, i18n, state) => {
 };
 
 export default (path, value, prevValue, elements, i18n, state) => {
-  // console.log(path, value);
   switch (path) {
     case 'form.error':
       renderErrors(elements, value, prevValue, i18n);
