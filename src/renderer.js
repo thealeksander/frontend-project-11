@@ -73,14 +73,23 @@ const renderFeed = (elements, feeds, i18n) => {
   const { title, description } = _.last(feeds);
   const feedsIneer = `
     <div class="card border-0">
-      <div class="card-body">
-        <h1 class="card-title fs-4 fw-semibold mb-4">${i18n.t('feeds')}</h1>
-        <h3 class="fw-semibold fs-6 m-0">${title}</h3>
-        <p class="small text-black-50 m-0">${description}</p>
-      </div>
+      <div class="card-body"></div>
     </div>`;
 
   elements.feeds.innerHTML = feedsIneer;
+  const cardBody = elements.feeds.querySelector('.card-body');
+
+  const titleFeeds = document.createElement('h1');
+  titleFeeds.classList.add('card-title', 'fs-4', 'fw-semibold', 'mb-4');
+  titleFeeds.textContent = i18n.t('feeds');
+  const titleFeed = document.createElement('h3');
+  titleFeed.classList.add('fw-semibold', 'fs-6', 'm-0');
+  titleFeed.textContent = title;
+  const descriptionFeed = document.createElement('p');
+  descriptionFeed.classList.add('small', 'text-black-50', 'm-0');
+  descriptionFeed.textContent = description;
+
+  cardBody.append(titleFeeds, titleFeed, descriptionFeed);
 };
 
 const renderPosts = (elements, posts, i18n, state) => {
@@ -89,16 +98,37 @@ const renderPosts = (elements, posts, i18n, state) => {
       <div class="card-body">
         <h2 class="card-title h4">${i18n.t('posts.title')}</h2>
       </div>
-      <ul class="list-group border-0 rounded-0">
-        ${posts.map(({ titlePost, linkPost, id }) => `
-          <li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
-            <a href="${linkPost}" class="${state.contents.viewedPosts.includes(id) ? 'link-secondary fw-normal' : 'fw-bold'}" data-id="${id}" target="_blank" rel="noopener noreferrer">${titlePost}</a>
-            <button type="button" class="btn btn-outline-primary btn-sm" data-id="${id}" data-bs-toggle="modal" data-bs-target="#modal">${i18n.t('posts.btn')}</button>
-          </li>`).join('')}
-      </ul>  
+      <ul class="list-group border-0 rounded-0"></ul>  
     </div>`;
 
   elements.posts.innerHTML = postsInner;
+  const listPosts = elements.posts.querySelector('.list-group');
+
+  posts.forEach(({ titlePost, linkPost, id }) => {
+    const tagLi = document.createElement('li');
+    const tagA = document.createElement('a');
+    const button = document.createElement('button');
+
+    tagLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+
+    const classForTagA = (state.contents.viewedPosts.includes(id)) ? 'link-secondary fw-normal' : 'fw-bold';
+    tagA.classList.add(classForTagA);
+    tagA.setAttribute('href', linkPost);
+    tagA.setAttribute('data-id', id);
+    tagA.setAttribute('target', '_blank');
+    tagA.setAttribute('rel', 'noopener noreferrer');
+    tagA.textContent = titlePost;
+
+    button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+    button.setAttribute('type', 'button');
+    button.setAttribute('data-id', id);
+    button.setAttribute('data-bs-toggle', 'modal');
+    button.setAttribute('data-bs-target', '#modal');
+    button.textContent = i18n.t('posts.btn');
+
+    tagLi.append(tagA, button);
+    listPosts.append(tagLi);
+  });
 };
 
 export default (path, value, prevValue, elements, i18n, state) => {
