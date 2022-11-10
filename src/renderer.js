@@ -111,8 +111,6 @@ const renderPosts = (elements, posts, i18n, state) => {
 
     tagLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
-    // const classForTagA = (state.contents.viewedPosts.includes(id)) ? 'link-secondary fw-normal' : 'fw-bold';
-    // tagA.classList.add(classForTagA);
     if (state.contents.viewedPosts.includes(id)) {
       tagA.classList.add('link-secondary', 'fw-normal');
     } else {
