@@ -91,16 +91,16 @@ export default () => {
         posts: document.querySelector('.posts'),
       };
 
+      elements.posts.addEventListener('click', (event) => {
+        const { id } = event.target.dataset;
+        watchedState.contents.activePost = id;
+        if (!watchedState.contents.viewedPosts.includes(id)) {
+          watchedState.contents.viewedPosts = [...watchedState.contents.viewedPosts, id];
+        }
+      });
+
       const watchedState = onChange(state, (path, value, prevValue) => {
         render(path, value, prevValue, elements, i18n, state);
-
-        elements.posts.addEventListener('click', (event) => {
-          const { id } = event.target.dataset;
-          watchedState.contents.activePost = id;
-          if (!watchedState.contents.viewedPosts.includes(id)) {
-            watchedState.contents.viewedPosts = [...watchedState.contents.viewedPosts, id];
-          }
-        });
       });
 
       updateData(watchedState);
