@@ -1,11 +1,6 @@
 import _ from 'lodash';
 
 const openHolder = (activeId, state, elements) => {
-  if (!state.contents.viewedPosts.includes(activeId)) {
-    const viewedPost = document.querySelector(`a[data-id="${activeId}"]`);
-    viewedPost.classList.add('link-secondary', 'fw-normal');
-    viewedPost.classList.remove('fw-bold');
-  }
   const activePost = state.contents.posts.find(({ id }) => id === activeId);
   const { titlePost, descriptionPost, linkPost } = activePost;
 

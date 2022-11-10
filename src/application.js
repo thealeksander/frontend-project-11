@@ -91,19 +91,21 @@ export default () => {
         posts: document.querySelector('.posts'),
       };
 
-      elements.posts.addEventListener('click', (event) => {
-        const { id } = event.target.dataset;
-        watchedState.contents.activePost = id;
-        if (!watchedState.contents.viewedPosts.includes(id)) {
-          watchedState.contents.viewedPosts = [...watchedState.contents.viewedPosts, id];
-        }
-      });
-
       const watchedState = onChange(state, (path, value, prevValue) => {
         render(path, value, prevValue, elements, i18n, state);
       });
 
       updateData(watchedState);
+
+      elements.posts.addEventListener('click', (event) => {
+        const { id } = event.target.dataset;
+        if (!watchedState.contents.viewedPosts.includes(id)) {
+          watchedState.contents.viewedPosts = [...watchedState.contents.viewedPosts, id];
+          watchedState.contents.posts = [...watchedState.contents.posts];
+        }
+        console.log(watchedState.contents.viewedPosts);
+        watchedState.contents.activePost = id;
+      });
 
       elements.form.addEventListener('submit', (event) => {
         event.preventDefault();
