@@ -17,11 +17,10 @@ const buildPath = (url) => {
 
 const updateData = (watchedState) => {
   const cb = () => {
-    console.log('Timer!');
     const savedUrls = watchedState.contents.feeds.map((el) => el.url);
     const promises = savedUrls.map((link) => axios.get(buildPath(link))
-        .then((response) => parser(response.data.contents))
-        .catch((e) => console.log(e)));
+      .then((response) => parser(response.data.contents))
+      .catch((e) => console.log(e)));
     Promise.all(promises)
       .then((responseArr) => {
         const postAll = responseArr.reduce((acc, { posts }) => {
@@ -31,7 +30,6 @@ const updateData = (watchedState) => {
           }));
           return [...acc, ...postsWithId];
         }, []);
-
         const newPosts = _.differenceBy(postAll, Array.from(watchedState.contents.posts), 'titlePost');
         if (newPosts.length !== 0) {
           watchedState.contents.posts = [...newPosts, ...watchedState.contents.posts];
