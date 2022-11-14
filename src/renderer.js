@@ -64,7 +64,8 @@ const handleProcessState = (elements, value, i18n) => {
   }
 };
 
-const renderFeed = (elements, feeds, i18n) => {
+const renderFeed = (elements, i18n, state) => {
+  const { feeds } = state.contents;
   const { title, description } = _.last(feeds);
   const feedsIneer = `
     <div class="card border-0">
@@ -87,7 +88,8 @@ const renderFeed = (elements, feeds, i18n) => {
   cardBody.append(titleFeeds, titleFeed, descriptionFeed);
 };
 
-const renderPosts = (elements, posts, i18n, state) => {
+const renderPosts = (elements, i18n, state) => {
+  const { posts, viewedPosts } = state.contents;
   const postsInner = `
     <div class="card border-0">
       <div class="card-body">
@@ -106,7 +108,7 @@ const renderPosts = (elements, posts, i18n, state) => {
 
     tagLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
-    if (state.contents.viewedPosts.includes(id)) {
+    if (viewedPosts.includes(id)) {
       tagA.classList.add('link-secondary', 'fw-normal');
     } else {
       tagA.classList.add('fw-bold');
@@ -141,10 +143,13 @@ export default (path, value, prevValue, elements, i18n, state) => {
       handleProcessState(elements, value, i18n);
       break;
     case 'contents.feeds':
-      renderFeed(elements, value, i18n);
+      renderFeed(elements, i18n, state);
       break;
     case 'contents.posts':
-      renderPosts(elements, value, i18n, state);
+      renderPosts(elements, i18n, state);
+      break;
+    case 'contents.viewedPosts': 
+      renderPosts(elements, i18n, state);
       break;
     case 'contents.activePost':
       openHolder(value, state, elements);

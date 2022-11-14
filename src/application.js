@@ -104,9 +104,7 @@ export default () => {
         const { id } = event.target.dataset;
         if (!watchedState.contents.viewedPosts.includes(id)) {
           watchedState.contents.viewedPosts = [...watchedState.contents.viewedPosts, id];
-          watchedState.contents.posts = [...watchedState.contents.posts];
         }
-
         watchedState.contents.activePost = id;
       });
 
