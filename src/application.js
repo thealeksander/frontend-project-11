@@ -39,7 +39,7 @@ const updateData = (watchedState) => {
         }
       })
       .catch((e) => console.log(e)));
-    Promise.all(promises).then(() => setTimeout(cb, 5000));   
+    Promise.all(promises).then(() => setTimeout(cb, 5000));
   };
   setTimeout(cb, 5000);
 };
