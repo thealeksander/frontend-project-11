@@ -1,8 +1,9 @@
 import _ from 'lodash';
 
-const openHolder = (activeId, state, elements) => {
-  const activePost = state.contents.posts.find(({ id }) => id === activeId);
-  const { titlePost, descriptionPost, linkPost } = activePost;
+const openHolder = (state, elements) => {
+  const { activePost, posts } = state.contents;
+  const post = posts.find(({ id }) => id === activePost);
+  const { titlePost, descriptionPost, linkPost } = post;
 
   const linkBtn = elements.modal.footer.querySelector('a.btn');
   elements.modal.title.textContent = titlePost;
@@ -10,26 +11,23 @@ const openHolder = (activeId, state, elements) => {
   linkBtn.href = linkPost;
 };
 
-const renderErrors = (elements, error, prevError, i18n) => {
+const renderErrors = (elements, i18n, state) => {
+  const { error } = state.form;
   const rssElement = elements.fields.rss;
   const { feedbackEl } = elements;
+
   if (feedbackEl.classList.contains('text-success')) {
     feedbackEl.classList.remove('text-success');
   }
   feedbackEl.classList.add('text-danger');
 
   const isError = (error !== null);
-  const wasError = (prevError !== null);
-
-  if (!wasError && !isError) {
-    return;
-  }
-  if (wasError && !isError) {
+  if (!isError) {
     rssElement.classList.remove('is-invalid');
     feedbackEl.textContent = '';
     return;
   }
-  if (wasError && isError) {
+  if (isError) {
     feedbackEl.textContent = i18n.t(`feedbackText.${error}`);
     return;
   }
@@ -38,10 +36,11 @@ const renderErrors = (elements, error, prevError, i18n) => {
   feedbackEl.textContent = i18n.t(`feedbackText.${error}`);
 };
 
-const handleProcessState = (elements, value, i18n) => {
+const handleProcessState = (elements, i18n, state) => {
+  const { mode } = state.form;
   const { feedbackEl } = elements;
 
-  switch (value) {
+  switch (mode) {
     case 'sending':
       elements.submitButton.disabled = true;
       break;
@@ -55,7 +54,7 @@ const handleProcessState = (elements, value, i18n) => {
         feedbackEl.classList.remove('text-danger');
       }
       feedbackEl.classList.add('text-success');
-      feedbackEl.textContent = i18n.t(`feedbackText.${value}`);
+      feedbackEl.textContent = i18n.t(`feedbackText.${mode}`);
       elements.fields.rss.value = '';
       elements.fields.rss.focus();
       break;
@@ -131,16 +130,16 @@ const renderPosts = (elements, i18n, state) => {
   });
 };
 
-export default (path, value, prevValue, elements, i18n, state) => {
+export default (path, elements, i18n, state) => {
   switch (path) {
     case 'form.error':
-      renderErrors(elements, value, prevValue, i18n);
+      renderErrors(elements, i18n, state);
       break;
     case 'contents.error':
-      renderErrors(elements, value, prevValue, i18n);
+      renderErrors(elements, i18n, state);
       break;
     case 'form.mode':
-      handleProcessState(elements, value, i18n);
+      handleProcessState(elements, i18n, state);
       break;
     case 'contents.feeds':
       renderFeed(elements, i18n, state);
@@ -152,7 +151,7 @@ export default (path, value, prevValue, elements, i18n, state) => {
       renderPosts(elements, i18n, state);
       break;
     case 'contents.activePost':
-      openHolder(value, state, elements);
+      openHolder(state, elements);
       break;
     default:
       break;

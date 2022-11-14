@@ -94,8 +94,8 @@ export default () => {
         posts: document.querySelector('.posts'),
       };
 
-      const watchedState = onChange(state, (path, value, prevValue) => {
-        render(path, value, prevValue, elements, i18n, state);
+      const watchedState = onChange(state, (path) => {
+        render(path, elements, i18n, state);
       });
 
       updateData(watchedState);
