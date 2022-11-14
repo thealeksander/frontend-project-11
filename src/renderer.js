@@ -146,7 +146,7 @@ export default (path, value, elements, i18n, state) => {
     case 'contents.posts':
       renderPosts(elements, i18n, state);
       break;
-    case 'contents.viewedPosts': 
+    case 'contents.viewedPosts':
       renderPosts(elements, i18n, state);
       break;
     case 'contents.activePost':
