@@ -11,7 +11,7 @@ const openHolder = (elements, state) => {
   linkBtn.href = linkPost;
 };
 
-const renderErrors = (elements, i18n, error) => {
+const renderErrors = (elements, i18n, state, error) => {
   const rssElement = elements.fields.rss;
   const { feedbackEl } = elements;
 
@@ -132,10 +132,10 @@ const renderPosts = (elements, i18n, state) => {
 export default (path, value, elements, i18n, state) => {
   switch (path) {
     case 'form.error':
-      renderErrors(elements, i18n, value);
+      renderErrors(elements, i18n, state, value);
       break;
     case 'contents.error':
-      renderErrors(elements, i18n, value);
+      renderErrors(elements, i18n, state, value);
       break;
     case 'form.mode':
       handleProcessState(elements, i18n, state);
