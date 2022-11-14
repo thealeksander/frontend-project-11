@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const openHolder = (state, elements) => {
+const openHolder = (elements, state) => {
   const { activePost, posts } = state.contents;
   const post = posts.find(({ id }) => id === activePost);
   const { titlePost, descriptionPost, linkPost } = post;
@@ -11,8 +11,7 @@ const openHolder = (state, elements) => {
   linkBtn.href = linkPost;
 };
 
-const renderErrors = (elements, i18n, state) => {
-  const { error } = state.form;
+const renderErrors = (elements, i18n, error) => {
   const rssElement = elements.fields.rss;
   const { feedbackEl } = elements;
 
@@ -130,13 +129,13 @@ const renderPosts = (elements, i18n, state) => {
   });
 };
 
-export default (path, elements, i18n, state) => {
+export default (path, value, elements, i18n, state) => {
   switch (path) {
     case 'form.error':
-      renderErrors(elements, i18n, state);
+      renderErrors(elements, i18n, value);
       break;
     case 'contents.error':
-      renderErrors(elements, i18n, state);
+      renderErrors(elements, i18n, value);
       break;
     case 'form.mode':
       handleProcessState(elements, i18n, state);
@@ -151,7 +150,7 @@ export default (path, elements, i18n, state) => {
       renderPosts(elements, i18n, state);
       break;
     case 'contents.activePost':
-      openHolder(state, elements);
+      openHolder(elements, state);
       break;
     default:
       break;
