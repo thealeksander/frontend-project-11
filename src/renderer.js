@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const openHolder = (elements, state) => {
   const { activePost, posts } = state.contents;
   const post = posts.find(({ id }) => id === activePost);
@@ -64,7 +62,6 @@ const handleProcessState = (elements, i18n, state) => {
 
 const renderFeed = (elements, i18n, state) => {
   const { feeds } = state.contents;
-  // const { title, description } = _.last(feeds);
   const feedsIneer = `
     <div class="card border-0">
       <div class="card-body"></div>
@@ -73,10 +70,10 @@ const renderFeed = (elements, i18n, state) => {
   elements.feeds.innerHTML = feedsIneer;
   const cardBody = elements.feeds.querySelector('.card-body');
 
-  const title = document.createElement('h1');
-  title.classList.add('card-title', 'fs-4', 'fw-semibold', 'mb-4');
-  title.textContent = i18n.t('feeds');
-  cardBody.append(title);
+  const titleFeeds = document.createElement('h1');
+  titleFeeds.classList.add('card-title', 'fs-4', 'fw-semibold', 'mb-4');
+  titleFeeds.textContent = i18n.t('feeds');
+  cardBody.append(titleFeeds);
 
   feeds.forEach(({ title, description }) => {
     const titleFeed = document.createElement('h3');
