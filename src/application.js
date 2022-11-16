@@ -17,29 +17,21 @@ const buildPath = (url) => {
 
 const updateData = (watchedState) => {
   const cb = () => {
-    console.log('Timer!');
     const savedUrls = watchedState.contents.feeds.map((el) => el.url);
     const promises = savedUrls.map((link) => axios.get(buildPath(link))
       .then((response) => {
         const { posts } = parser(response.data.contents);
-        return posts;
-      })
-      .then((posts) => {
         const postsWithId = posts.map((post) => ({
           id: _.uniqueId(),
           ...post,
         }));
-        return postsWithId;
-      })
-      .then((postsWithId) => {
         const newPosts = _.differenceBy(postsWithId, Array.from(watchedState.contents.posts), 'titlePost');
         if (newPosts.length !== 0) {
           watchedState.contents.posts = [...newPosts, ...watchedState.contents.posts];
-          console.log('Update!');
         }
       })
       .catch((e) => console.log(e)));
-    Promise.all(promises).then(() => setTimeout(cb, 5000));
+    Promise.all(promises).finally(() => setTimeout(cb, 5000));
   };
   setTimeout(cb, 5000);
 };
@@ -63,7 +55,6 @@ export default () => {
   const defaultLg = 'ru';
   i18n.init({
     lng: defaultLg,
-    debug: true,
     resources,
   })
     .then(() => {
@@ -130,8 +121,8 @@ export default () => {
             }));
 
             watchedState.contents.feeds = [
-              ...watchedState.contents.feeds,
               { title, description, url },
+              ...watchedState.contents.feeds,
             ];
             watchedState.contents.posts = [
               ...postsWithId,
